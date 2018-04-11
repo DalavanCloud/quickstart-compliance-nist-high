@@ -1,0 +1,34 @@
+[
+    {
+        "ParameterKey": "pDBPassword",
+        "ParameterValue": "$[alfred_genpass_28]"
+    },
+    {
+        "ParameterKey": "pNotifyEmail",
+        "ParameterValue": "distlist@example.org"
+    },
+    {
+        "ParameterKey": "pEC2KeyPairBastion",
+        "ParameterValue": "$[alfred_getkeypair]"
+    },
+    {
+        "ParameterKey": "pEC2KeyPair",
+        "ParameterValue": "$[alfred_getkeypair]"
+    },
+    {
+        "ParameterKey": "pSupportsConfig",
+        "ParameterValue": "false"
+    },
+    {
+        "ParameterKey": "pAvailabilityZoneA",
+        "ParameterValue": "$[alfred_getsingleaz_1]"
+    },
+    {
+        "ParameterKey": "pAvailabilityZoneB",
+        "ParameterValue": "$[alfred_getsingleaz_2]"
+    },
+    {
+        "ParameterKey": "pVPCTenancy",
+        "ParameterValue": "default"
+    }
+]
