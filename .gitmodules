@@ -1,0 +1,8 @@
+[submodule "submodules/quickstart-compliance-common"]
+	path = submodules/quickstart-compliance-common
+	url = ../../aws-quickstart/quickstart-compliance-common.git
+	branch = master
+[submodule "submodules/quickstart-trendmicro-deepsecurity"]
+	path = submodules/quickstart-trendmicro-deepsecurity
+	url = ../../aws-quickstart/quickstart-trendmicro-deepsecurity.git
+	branch = master
