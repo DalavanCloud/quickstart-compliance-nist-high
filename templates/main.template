@@ -26,6 +26,11 @@ Metadata:
       - pAvailabilityZoneA
       - pAvailabilityZoneB
     - Label:
+        default: Deep Security Manager Configuration
+      Parameters:
+      - DeepSecurityAdminName
+      - DeepSecurityAdminPass
+    - Label:
         default: AWS Quick Start Configuration
       Parameters:
       - QSS3BucketName
@@ -51,6 +56,12 @@ Metadata:
         default: Quick Start S3 Bucket Name
       QSS3KeyPrefix:
         default: Quick Start S3 Key Prefix
+      DeepSecurityAdminName:
+        default: Administrator username for Deep Security
+      DeepSecurityAdminPass:
+        default: Administrator password for Deep Security
+      ProtectedInstances:
+        default: Number of instances you expect to protect with Deep Security Agents
 Parameters:
   pDBPassword:
     Description: Mixed alphanumeric and must be between 8 and 28 characters and contain
@@ -96,6 +107,27 @@ Parameters:
     AllowedValues:
     - default
     - dedicated
+  DeepSecurityAdminName:
+    Default: MasterAdmin
+    Description: The Deep Security Manager administrator username for Web Console
+      Access.
+    Type: String
+    MinLength: 1
+    MaxLength: 16
+    AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
+    ConstraintDescription: Must begin with a letter and contain only alphanumeric
+      characters. Min length 1, max length 16
+  DeepSecurityAdminPass:
+    NoEcho: true
+    Description: The Deep Security Manager administrator password. Must be 8-41 characters
+      long and can only contain alphanumeric characters or the following special characters
+      !^*-_+
+    Type: String
+    MinLength: 8
+    MaxLength: 41
+    AllowedPattern: '[a-zA-Z0-9!^*\-_+]*'
+    ConstraintDescription: Can only contain alphanumeric characters or the following
+      special characters !^*-_+ Min length 8, max length 41
   QSS3BucketName:
     AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-.]*[0-9a-zA-Z])*$
     ConstraintDescription: Quick Start bucket name can include numbers, lowercase
@@ -433,9 +465,61 @@ Resources:
           - CustomVariables
           - vResourceEnvironmentTagKey
           - Value
+  DSMTemplate:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: ManagementVpcTemplate
+    Properties:
+      TemplateURL:
+        !Sub
+        - https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}submodules/quickstart-trendmicro-deepsecurity/templates/marketplace/master-mp.template
+        - QSS3Region:
+            !If
+            - GovCloudCondition
+            - s3-us-gov-west-1
+            - s3
+      TimeoutInMinutes: 120
+      Parameters:
+        AWSIKeyPairName: !Ref pEC2KeyPair
+        AWSIVPC:
+          !GetAtt
+          - ManagementVpcTemplate
+          - Outputs.rVPCManagement
+        DBICAdminName: dsmadmin
+        DBICAdminPassword: !Ref DeepSecurityAdminPass
+        DBIRDSInstanceSize: db.m4.large
+        DBIStorageAllocation: 50
+        DBISubnet1:
+          !GetAtt
+          - ManagementVpcTemplate
+          - Outputs.rManagementPrivateSubnetA
+        DBISubnet2:
+          !GetAtt
+          - ManagementVpcTemplate
+          - Outputs.rManagementPrivateSubnetB
+        DBPBackupDays: 5
+        DBPCreateDbInstance: 'Yes'
+        DBPEngine: PostgreSQL
+        DBPMultiAZ: true
+        DBPName: dsm
+        DSCLicenseType: Enterprise
+        DSELBPosture: Internet-facing
+        DSIMultiNode: 2
+        DSIPGUIPort: 443
+        DSIPHeartbeatPort: 4120
+        DSIPInstanceType: m4.large
+        DSIPLicense: PerHost
+        DSIPLicenseKey: XX-XXXX-XXXXX-XXXXX-XXXXX-XXXXX-XXXXX
+        DSISubnetID:
+          !GetAtt
+          - ManagementVpcTemplate
+          - Outputs.rManagementDMZSubnetA
+        DSCAdminName: !Ref DeepSecurityAdminName
+        DSCAdminPassword: !Ref DeepSecurityAdminPass
+        QSS3BucketName: !Ref QSS3BucketName
+        QSS3KeyPrefix: !Sub ${QSS3KeyPrefix}submodules/quickstart-trendmicro-deepsecurity/
   ApplicationTemplate:
     Type: AWS::CloudFormation::Stack
-    DependsOn: ProductionVpcTemplate
+    DependsOn: DSMTemplate
     Properties:
       TemplateURL:
         !Sub
@@ -524,6 +608,14 @@ Resources:
           - RegionServiceSupport
           - !Ref AWS::Region
           - Glacier
+        DeepSecurityConsole:
+          !GetAtt
+          - DSMTemplate
+          - Outputs.DeepSecurityConsole
+        DeepSecurityHeartbeat:
+          !GetAtt
+          - DSMTemplate
+          - Outputs.DeepSecurityHeartbeat
         QSS3BucketName: !Ref QSS3BucketName
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
 Outputs:
