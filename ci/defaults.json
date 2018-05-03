@@ -1,5 +1,13 @@
 [
     {
+        "ParameterKey": "DeepSecurityAdminName",
+        "ParameterValue": "MasterAdmin"
+    },
+    {
+        "ParameterKey": "DeepSecurityAdminPass",
+        "ParameterValue": "$[alfred_genpass_28]"
+    },
+    {
         "ParameterKey": "pDBPassword",
         "ParameterValue": "$[alfred_genpass_28]"
     },
