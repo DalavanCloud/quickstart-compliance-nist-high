@@ -54,7 +54,7 @@ Metadata:
       - QSS3BucketName
       - QSS3KeyPrefix
     - Label:
-        default: Deep Security
+        default: Trend Micro Deep Security
       Parameters:
       - DeepSecurityConsole
       - DeepSecurityHeartbeat
