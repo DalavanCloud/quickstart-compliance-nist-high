@@ -53,6 +53,11 @@ Metadata:
       Parameters:
       - QSS3BucketName
       - QSS3KeyPrefix
+    - Label:
+        default: Trend Micro Deep Security
+      Parameters:
+      - DeepSecurityConsole
+      - DeepSecurityHeartbeat
 Parameters:
   pSecurityAlarmTopic:
     Description: SNS topic for alarms and notifications
@@ -158,6 +163,12 @@ Parameters:
       can include numbers, lowercase letters, uppercase letters, hyphens (-), and
       forward slash (/).
     Type: String
+  DeepSecurityConsole:
+    Description: URL of the Deep Security Console
+    Type: String
+  DeepSecurityHeartbeat:
+      Description: URL for Deep Security heartbeats
+      Type: String
 Mappings:
   elbMap:
     ap-northeast-1:
@@ -282,6 +293,10 @@ Resources:
         FromPort: 443
         ToPort: 443
         CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 4120
+        ToPort: 4120
+        CidrIp: 0.0.0.0/0
       - IpProtocol: udp
         FromPort: 123
         ToPort: 123
@@ -341,6 +356,10 @@ Resources:
       - IpProtocol: tcp
         FromPort: 443
         ToPort: 443
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 4120
+        ToPort: 4120
         CidrIp: 0.0.0.0/0
       - IpProtocol: udp
         FromPort: 123
@@ -612,7 +631,8 @@ Resources:
       SecurityGroups:
       - !Ref rSecurityGroupWebInstance
       UserData:
-        Fn::Base64: !Sub |
+        Fn::Base64: !Sub
+        - |
           #!/bin/bash
           yum update -y
 
@@ -654,6 +674,17 @@ Resources:
           sed -i '/default_server;/d' /etc/nginx/nginx.conf
           sleep 10
           service nginx restart
+
+          #Deep Security Setup
+          wget ${DSMURL}/software/agent/amzn1/x86_64/ -O /tmp/agent.rpm --no-check-certificate --quiet
+
+          rpm -ihv /tmp/agent.rpm
+          sleep 30
+
+          /opt/ds_agent/dsa_control -r
+          /opt/ds_agent/dsa_control -a ${DSMHB} "policy:Linux Server"
+        - DSMURL: !Ref DeepSecurityConsole
+          DSMHB: !Ref DeepSecurityHeartbeat
   rAutoScalingGroupWeb:
     Type: AWS::AutoScaling::AutoScalingGroup
     DependsOn: rAutoScalingConfigWeb
@@ -904,11 +935,22 @@ Resources:
 
             # Inject the security control matrix file location.
             sudo sed -i "s|{compliance-body-matrix}|https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}assets/$COMPLIANCE_MATRIX_FILENAME|g" $LANDING_PAGE
+
+            #Deep Security Setup
+            wget ${DSMURL}/software/agent/amzn1/x86_64/ -O /tmp/agent.rpm --no-check-certificate --quiet
+
+            rpm -ihv /tmp/agent.rpm
+            sleep 30
+
+            /opt/ds_agent/dsa_control -r
+            /opt/ds_agent/dsa_control -a ${DSMHB} "policy:Linux Server"
           - QSS3Region:
               !If
               - GovCloudCondition
               - s3-us-gov-west-1
               - s3
+            DSMURL: !Ref DeepSecurityConsole
+            DSMHB: !Ref DeepSecurityHeartbeat
   rAutoScalingGroupApp:
     Type: AWS::AutoScaling::AutoScalingGroup
     DependsOn: rAutoScalingConfigApp
