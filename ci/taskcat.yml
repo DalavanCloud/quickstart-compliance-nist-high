@@ -1,0 +1,15 @@
+global:
+  govcloud: true
+  marketplace-ami: false
+  owner: quickstart-eng@amazon.com
+  qsname: quickstart-compliance-nist-high
+  regions:
+  - us-east-1
+  - us-east-2
+  - us-west-1
+  - us-west-2
+  reporting: true
+tests:
+  defaults:
+    parameter_input: defaults.json
+    template_file: main.template
