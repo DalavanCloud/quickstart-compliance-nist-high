@@ -480,11 +480,11 @@ Resources:
       - !Ref pAppPrivateSubnetA
       - !Ref pAppPrivateSubnetB
       HealthCheck:
-        HealthyThreshold: 2
-        Interval: 15
+        HealthyThreshold: "2"
+        Interval: "15"
         Target: TCP:80
-        Timeout: 5
-        UnhealthyThreshold: 3
+        Timeout: "5"
+        UnhealthyThreshold: "3"
       AccessLoggingPolicy:
         S3BucketName: !Ref rS3ELBAccessLogs
         S3BucketPrefix: Logs
@@ -493,8 +493,8 @@ Resources:
       SecurityGroups:
       - !Ref rSecurityGroupApp
       Listeners:
-      - InstancePort: 80
-        LoadBalancerPort: 80
+      - InstancePort: "80"
+        LoadBalancerPort: "80"
         Protocol: HTTP
         InstanceProtocol: HTTP
       Scheme: internal
@@ -514,11 +514,11 @@ Resources:
       - !Ref pDMZSubnetA
       - !Ref pDMZSubnetB
       HealthCheck:
-        HealthyThreshold: 2
-        Interval: 30
+        HealthyThreshold: "2"
+        Interval: "30"
         Target: TCP:80
-        Timeout: 5
-        UnhealthyThreshold: 5
+        Timeout: "5"
+        UnhealthyThreshold: "5"
       AccessLoggingPolicy:
         S3BucketName: !Ref rS3ELBAccessLogs
         S3BucketPrefix: Logs
@@ -527,8 +527,8 @@ Resources:
       SecurityGroups:
       - !Ref rSecurityGroupWeb
       Listeners:
-      - InstancePort: 80
-        LoadBalancerPort: 80
+      - InstancePort: "80"
+        LoadBalancerPort: "80"
         Protocol: HTTP
         InstanceProtocol: HTTP
       Tags:
@@ -696,8 +696,8 @@ Resources:
       - !Ref pDMZSubnetA
       - !Ref pDMZSubnetB
       LaunchConfigurationName: !Ref rAutoScalingConfigWeb
-      MinSize: 2
-      MaxSize: 4
+      MinSize: "2"
+      MaxSize: "4"
       LoadBalancerNames:
       - !Ref rELBWeb
       HealthCheckType: ELB
@@ -714,14 +714,14 @@ Resources:
     Properties:
       AdjustmentType: ChangeInCapacity
       AutoScalingGroupName: !Ref rAutoScalingGroupWeb
-      Cooldown: 500
+      Cooldown: "500"
       ScalingAdjustment: 1
   rAutoScalingDownWeb:
     Type: AWS::AutoScaling::ScalingPolicy
     Properties:
       AdjustmentType: ChangeInCapacity
       AutoScalingGroupName: !Ref rAutoScalingGroupWeb
-      Cooldown: 500
+      Cooldown: "500"
       ScalingAdjustment: -1
   rCWAlarmHighCPUWeb:
     Type: AWS::CloudWatch::Alarm
@@ -962,8 +962,8 @@ Resources:
       - !Ref pAppPrivateSubnetA
       - !Ref pAppPrivateSubnetB
       LaunchConfigurationName: !Ref rAutoScalingConfigApp
-      MinSize: 2
-      MaxSize: 4
+      MinSize: "2"
+      MaxSize: "4"
       LoadBalancerNames:
       - !Ref rELBApp
       HealthCheckType: ELB
@@ -980,14 +980,14 @@ Resources:
     Properties:
       AdjustmentType: ChangeInCapacity
       AutoScalingGroupName: !Ref rAutoScalingGroupApp
-      Cooldown: 1
+      Cooldown: "1"
       ScalingAdjustment: 1
   rAutoScalingUpApp:
     Type: AWS::AutoScaling::ScalingPolicy
     Properties:
       AdjustmentType: ChangeInCapacity
       AutoScalingGroupName: !Ref rAutoScalingGroupApp
-      Cooldown: 1
+      Cooldown: "1"
       ScalingAdjustment: -1
   rCWAlarmHighCPUApp:
     Type: AWS::CloudWatch::Alarm

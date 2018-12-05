@@ -5,11 +5,11 @@
     },
     {
         "ParameterKey": "DeepSecurityAdminPass",
-        "ParameterValue": "$[alfred_genpass_28]"
+        "ParameterValue": "$[taskcat_genpass_26]"
     },
     {
         "ParameterKey": "pDBPassword",
-        "ParameterValue": "$[alfred_genpass_28]"
+        "ParameterValue": "$[taskcat_genpass_26]"
     },
     {
         "ParameterKey": "pNotifyEmail",
@@ -17,30 +17,26 @@
     },
     {
         "ParameterKey": "pEC2KeyPairBastion",
-        "ParameterValue": "$[alfred_getkeypair]"
+        "ParameterValue": "$[taskcat_getkeypair]"
     },
     {
         "ParameterKey": "pEC2KeyPair",
-        "ParameterValue": "$[alfred_getkeypair]"
+        "ParameterValue": "$[taskcat_getkeypair]"
     },
     {
         "ParameterKey": "pSupportsConfig",
         "ParameterValue": "false"
     },
     {
-        "ParameterKey": "pAvailabilityZoneA",
-        "ParameterValue": "$[alfred_getsingleaz_1]"
-    },
-    {
-        "ParameterKey": "pAvailabilityZoneB",
-        "ParameterValue": "$[alfred_getsingleaz_2]"
+        "ParameterKey": "pAvailabilityZones",
+        "ParameterValue": "$[taskcat_genaz_2]"
     },
     {
         "ParameterKey": "pVPCTenancy",
         "ParameterValue": "default"
     },
     {
-        "ParameterKey":"QSS3BucketName",
-        "ParameterValue":"$[taskcat_autobucket]"
+        "ParameterKey": "QSS3BucketName",
+        "ParameterValue": "$[taskcat_autobucket]"
     }
 ]
