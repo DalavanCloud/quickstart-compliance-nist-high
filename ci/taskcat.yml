@@ -10,6 +10,6 @@ global:
   - us-west-2
   reporting: true
 tests:
-  defaults:
+  compl-nist-high:
     parameter_input: defaults.json
     template_file: main.template
